@@ -5,7 +5,7 @@
 #include <exception>
 using namespace std;
 namespace matrix {
-    //заменить this на геттеры ffgfg
+    //заменить this на геттеры 
     template <typename T>
     class Matrix {
     private:
@@ -23,14 +23,13 @@ namespace matrix {
 
         int get_cols() const;
 
-
         T operator()(int index_one, int index_two) const;
 
         T& operator()(int index_one, int index_two);
 
-        Matrix<T> operator+(const Matrix<T>& arr);
+        Matrix<T>& operator+(const Matrix<T>& arr);
 
-        Matrix<T> operator-(const Matrix<T>& arr);
+        Matrix<T>& operator-(const Matrix<T>& arr);
 
         Matrix<T> operator*(const Matrix<T>& arr);
 
@@ -39,20 +38,11 @@ namespace matrix {
         Matrix<T>& operator/=(const T& value);
 
         T trace();
-
+        /*friend ostream& operator <<(ostream& stream, const Matrix<T>& matrix);*/
         ~Matrix();
     };
 
-    template<typename T>
-    std::ostream& operator <<(std::ostream& stream, const Matrix<T>& matrix) {
-        for (int i = 0; i < matrix.get_rows(); ++i) {
-            for (int j = 0; j < matrix.get_cols(); ++j) {
-                stream << matrix(i, j) << "\t";
-            }
-            stream << endl;
-        }
-        return stream;
-    }
+   
 
 
     template <typename T>
@@ -124,41 +114,50 @@ namespace matrix {
     }
 
     template <typename T>
-    Matrix<T> Matrix<T>::operator + (const Matrix<T>& arr) {
+    Matrix<T>& Matrix<T>::operator + (const Matrix<T>& arr) {
         if (this->_rows != arr.get_rows() || this->_cols != arr.get_cols()) {
             throw runtime_error("Size mismatch");
         }
-        Matrix<T> temp(this->get_rows(), this->get_cols(), 0);
+        Matrix<T>* temp = new Matrix<T>(get_rows(), get_cols(), 0);
         for (int i = 0; i < this->_rows; ++i) {
             for (int j = 0; j < this->_cols; ++j) {
-                temp._array[i][j] = this->_array[i][j] + arr._array[i][j];
+                temp->_array[i][j] = this->_array[i][j] + arr._array[i][j];
             }
         }
-        return temp;
+        return *temp;
     }
 
     template <typename T>
-    Matrix<T> Matrix<T>:: operator - (const Matrix<T>& arr) {
+    Matrix<T>& Matrix<T>::operator - (const Matrix<T>& arr) {
         if (this->_rows != arr.get_rows() || this->_cols != arr.get_cols()) {
             throw runtime_error("Size mismatch");
         }
-        Matrix<T> temp(this->get_rows(), this->get_cols(), 0);
+        Matrix<T>* temp = new Matrix<T>(get_rows(), get_cols(), 0);
         for (int i = 0; i < this->_rows; ++i) {
             for (int j = 0; j < this->_cols; ++j) {
-                temp._array[i][j] = this->_array[i][j] - arr._array[i][j];
+                temp->_array[i][j] = this->_array[i][j] - arr._array[i][j];
             }
         }
-        return temp;
+        return *temp;
     }
 
-
+    template<typename T>
+    ostream& operator <<(ostream& stream, const Matrix<T>& matrix) {
+        for (int i = 0; i < matrix.get_rows(); ++i) {
+            for (int j = 0; j < matrix.get_cols(); ++j) {
+                stream << matrix(i, j) << "\t";
+            }
+            stream << endl;
+        }
+        return stream;
+    }
 
     template <typename T>
     Matrix<T> Matrix<T>:: operator * (const Matrix<T>& arr) {
         if (this->_cols != arr._rows) {
             throw runtime_error("Incompatible matrix sizes for multiplication");
         }
-        Matrix<T> temp(this->get_rows(),arr.get_cols(),0);
+        Matrix<T> temp(this->_rows,arr.get_cols(),0);
         for (int i = 0; i < this->_rows; ++i) {
             for (int j = 0; j < arr._cols; ++j) {
                 for (int k = 0; k < this->_cols; k++) {

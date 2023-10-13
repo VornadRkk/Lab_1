@@ -1,13 +1,12 @@
-﻿#include "Lab_1.h"
+﻿#include "matrix.h"
 #include<iostream>
 using namespace std;
 using namespace matrix;
 
 int main() {
 	setlocale(LC_ALL, "rus");
-	Matrix<int> a(5, 3, 5);
-	Matrix<int> b(4, 5, 1);
-	Matrix<int> c(4, 5, 1);
-	auto result = a * b;
-	cout << result;
+	Matrix<int> a(3, 3, 5);
+	Matrix<int> b(3, 3, 1);
+	a*=5;
+	cout << a;
 }

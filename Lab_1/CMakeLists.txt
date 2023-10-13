@@ -3,7 +3,7 @@
 #
 
 # Добавьте источник в исполняемый файл этого проекта.
-add_executable (Lab_1 "Lab_1.cpp" "Lab_1.h")
+add_executable (Lab_1 "Lab_1.cpp" "matrix.h" "container.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Lab_1 PROPERTY CXX_STANDARD 20)
