@@ -36,6 +36,8 @@ namespace matrix {
         Matrix<T>& operator*=(const T& value);
 
         Matrix<T>& operator/=(const T& value);
+        /*Matrix<T>& operator=(const Matrix<T>& other);
+        void Swap(Matrix<T>& other);*/
 
         T trace();
         /*friend ostream& operator <<(ostream& stream, const Matrix<T>& matrix);*/
@@ -43,7 +45,17 @@ namespace matrix {
     };
 
    
+    /*template <typename T>
+    Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
 
+    }
+
+    template <typename T>
+    void Matrix<T>::Swap(Matrix<T>& other) {
+        swap(this->_rows, other._rows);
+        swap(this->_cols, other._cols);
+        this->_array.Swap(other._array);
+    }*/
 
     template <typename T>
     int Matrix<T>::get_rows() const {
