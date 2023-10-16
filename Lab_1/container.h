@@ -10,7 +10,7 @@ namespace matrix {
 		int _size;
 		T* _vector;
 	public:
-		Container() :_size(0) {}
+		Container();
 		Container(int size);
 		Container(const Container<T>& other);
 		int get_size();
@@ -22,31 +22,33 @@ namespace matrix {
 		T& operator[](int num);
 		T operator[](int num) const;
 	};
+
+	template <typename T>
+	Container<T>::Container() {
+		this->_vector = nullptr;
+		this->_size = 0;
+	}
+
 	template <typename T>
 	T Container<T>::operator[](int num) const {
-		if (num < 0 || num >= this->size_) {
+		if (num < 0 || num >= this->_size) {
 			throw runtime_error("Index out of range");
 		}
-		return this->vector[num];
+		return this->_vector[num];
 	}
 	template <typename T>
 	Container<T>& Container<T>::operator=(const Container<T>& other) {
-		if (this != &other) { 
-			this->_size = other._size;
-			this->_vector = new T[_size];
-			for (int i = 0; i < _size; i++) {
-				this->_vector[i] = other._vector[i];
-			}
-		}
+		Container<T> other_copy(other);
+		this->Swap(other_copy);
 		return *this;
 	}
 
 	template<typename T>
-	T& Container<T>::operator[](int num) {
-		if (num < 0 || num >= this->size_) {
+	T& Container<T>::operator[](int num) {	
+		if (num < 0 || num >= this->_size) {
 			throw runtime_error("Index out of range");
 		}
-		return this->vector[num];
+		return this->_vector[num];
 	}
 
 	template <typename T>
@@ -68,7 +70,9 @@ namespace matrix {
 	bool Container<T>::operator==(const Container<T>& other) const {
 		if (this->_size == other._size) {
 			for (int i = 0; i < this->_size; i++) {
-				if (this->_vector[i] != other[i]) return false;
+				if ((*this)[i] - other[i]) {
+					return false;
+				}
 			}
 			return true;
 		}
@@ -78,8 +82,9 @@ namespace matrix {
 	bool Container<float>::operator==(const Container<float>& other) const {
 		if (this->_size == other._size) {
 			for (int i = 0; i < this->_size; i++) {
-				if (fabs((*this)[i] - other[i]) <= epsilon) return false;
+				if (fabs((*this)[i] - other[i]) <= epsilon) {
 					return false;
+				}
 			}	
 			return true;
 		}
@@ -88,7 +93,7 @@ namespace matrix {
 
 	template<typename T>
 	bool Container<T>::operator!=(const Container<T>& other) const {
-		return !(this->_vector == other._vector);
+		return !((*this) == other);
 	}
 
 	template<typename T>
@@ -98,12 +103,11 @@ namespace matrix {
 	template<typename T>
 	Container<T>::Container(int size) {
 		this->_size = size;
+		this->_vector = new	T[_size]{ 0 };
 	}
 
 	template<typename T>
 	Container<T>::~Container() {
 		delete[] this->_vector;
 	}
-
-
 }

@@ -3,21 +3,23 @@
 #include <string>
 #include <ctime>
 #include <exception>
+#include "container.h"
 using namespace std;
 namespace matrix {
-    //заменить this на геттеры 
     template <typename T>
     class Matrix {
     private:
         int _rows;
         int _cols;
-        T** _array;
+        Container<T>* _array;
     public:
         Matrix() : _rows(0), _cols(0), _array(nullptr) {}
 
         Matrix(int rows, int cols, const T& value);
 
         Matrix(int rows, int cols, T upper_bound, T lower_bound);
+
+        /*Matrix(const Matrix<T>& other);*/
 
         int get_rows() const;
 
@@ -36,26 +38,45 @@ namespace matrix {
         Matrix<T>& operator*=(const T& value);
 
         Matrix<T>& operator/=(const T& value);
-        /*Matrix<T>& operator=(const Matrix<T>& other);
-        void Swap(Matrix<T>& other);*/
+        Matrix<T>& operator=(const Matrix<T>& other);
+        void Swap(Matrix<T>& other);
 
         T trace();
         /*friend ostream& operator <<(ostream& stream, const Matrix<T>& matrix);*/
         ~Matrix();
     };
-
+   /* template<typename T>
+    Matrix<T>::Matrix(const Matrix<T>& other) {
+        this->_rows = other._rows;
+        this->cols = other._cols;
+        this->_array = new Container<T>[other._rows];
+        for (int i = 0; i < other._rows; ++i) {
+            (*this[i]) = other[i];
+        }
+    }*/
    
-    /*template <typename T>
+    template <typename T>
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
-
+        if (this != &other) {
+            if (this->_array) {
+                delete[] this->_array;
+            }
+            this->_rows = other._rows;
+            this->_cols = other._cols;
+            this->_array = new Container<T>[this->_rows];
+            for (int i = 0; i < this->_rows; ++i) {
+                this->_array[i] = other._array[i];
+            }
+        }
+        return *this;
     }
 
     template <typename T>
     void Matrix<T>::Swap(Matrix<T>& other) {
         swap(this->_rows, other._rows);
         swap(this->_cols, other._cols);
-        this->_array.Swap(other._array);
-    }*/
+        swap(this->_array, other._array);
+    }
 
     template <typename T>
     int Matrix<T>::get_rows() const {
@@ -80,9 +101,9 @@ namespace matrix {
         }
         this->_rows = rows;
         this->_cols = cols;
-        this->_array = new T * [_rows];
+        this->_array = new Container<T>[_rows];
         for (int i = 0; i < _rows; ++i) {
-            this->_array[i] = new T[_cols];
+            this->_array[i] = Container<T>(cols);
         }
         for (int i = 0; i < _rows; ++i) {
             for (int j = 0; j < _cols; ++j) {
@@ -98,9 +119,9 @@ namespace matrix {
         }
         this->_rows = rows;
         this->_cols = cols;
-        _array = new T * [_rows];
+        _array = new Container<T>[_rows];
         for (int i = 0; i < _rows; ++i) {
-            _array[i] = new T[_cols];
+            _array[i] = Container<T>[_cols];
         }
         for (int i = 0; i < _rows; ++i) {
             for (int j = 0; j < _cols; ++j) {
@@ -203,7 +224,7 @@ namespace matrix {
         return *this;
     }
 
-    template <typename T>
+    template <typename T>   
     T Matrix<T>::trace() {
         if (this->_rows != this->_cols) {
             throw runtime_error("Impossible to calculate the trace");
@@ -219,9 +240,6 @@ namespace matrix {
 
     template <typename T>
     Matrix<T>::~Matrix() {
-        for (int i = 0; i < this->_rows; ++i) {
-            delete this->_array[i];
-        }
         delete[] this->_array;
     }
 }

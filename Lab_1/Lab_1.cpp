@@ -7,6 +7,7 @@ int main() {
 	setlocale(LC_ALL, "rus");
 	Matrix<int> a(3, 3, 5);
 	Matrix<int> b(3, 3, 1);
-	a*=5;
-	cout << a;
+	b = a;
+	cout << b;
+	return 0;
 }
