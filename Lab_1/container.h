@@ -105,7 +105,10 @@ namespace matrix {
 	template<typename T>
 	Container<T>::Container(int size) {
 		this->_size = size;
-		this->_vector = new	T[_size]{ 0 };
+		this->_vector = new	T[_size];
+		for (int i = 0; i < _size; ++i) {
+			_vector[i] = 0;
+		}
 	}
 
 	template<typename T>

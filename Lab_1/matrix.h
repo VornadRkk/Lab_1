@@ -19,11 +19,12 @@ namespace matrix {
         Matrix(int rows, int cols, const T& value);
 
         Matrix(int rows, int cols, T upper_bound, T lower_bound);
-       
+
+        Matrix(const Matrix<T>& matrix);
         int get_rows() const;
 
         int get_cols() const;
-
+        
         T operator()(int index_one, int index_two) const;
 
         T& operator()(int index_one, int index_two);
@@ -37,19 +38,18 @@ namespace matrix {
         Matrix<T>& operator*=(const T& value);
 
         Matrix<T>& operator=(const Matrix<T>& other);
-        T& operator[](int num);
-        T operator[](int num) const;
 
         T trace();
         ~Matrix();
     };
     template <typename T>
-    T Matrix<T>::operator[](int num) const {
-        return this->_array[num];
-    }
-    template <typename T>
-    T& Matrix<T>::operator[](int num) {
-        return this->_array[num];
+    Matrix<T>& Matrix<T>::operator*=(const T& value) {
+        for (int i = 0; i < _rows; ++i) {
+            for (int j = 0; j < _cols; ++j) {
+                _array[i][j] *= value;
+            }
+        }
+        return *this;
     }
     template<typename T>
     bool checking_for_coplanarity(const Matrix<T>& arr1, const Matrix<T>& arr2, const Matrix<T>& arr3) {
@@ -71,19 +71,13 @@ namespace matrix {
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
         if (this != &other) {
             if (this->_array) {
-                for (int i = 0; i < this->_rows; ++i) {
-                    delete[] this->_array[i];
-                }
                 delete[] this->_array;
             }
             this->_rows = other._rows;
             this->_cols = other._cols;
-            this->_array = new Container<T>*[this->_rows];
+            this->_array = new Container<T>[this->_rows];
             for (int i = 0; i < this->_rows; ++i) {
-                this->_array[i] = new Container<T>[this->_cols];
-                for (int j = 0; j < this->_cols; ++j) {
-                    this->_array[i][j] = other._array[i][j];
-                }
+                this->_array[i] = other._array[i];
             }
         }
         return *this;
@@ -189,6 +183,40 @@ namespace matrix {
         }
         return stream;
     }
+    template <typename T>
+    Matrix<T> operator*(const T& value, const Matrix<T> matrix) {
+        Matrix<T> temp(matrix.get_rows(), matrix.get_cols(), T(0));
+        for (int i = 0; i < temp.get_rows(); ++i) {
+            for (int j = 0; j < temp.get_cols(); ++j) {
+                temp(i, j) = value * matrix(i, j);
+            }
+        }
+        return temp;
+    }
+
+    template<typename T>
+    Matrix<T> operator*(const Matrix<T> matrix, const T& value) {
+        Matrix<T> temp(matrix.get_rows(), matrix.get_cols(), T(0));
+        for (int i = 0; i < temp.get_rows(); ++i) {
+            for (int j = 0; j < temp.get_cols(); ++j) {
+                temp(i, j) = value * matrix(i, j);
+            }
+        }
+        return temp;
+    }
+
+    template <typename T>
+    Matrix<T>::Matrix(const Matrix<T>& matrix) {
+        this->_rows = matrix._rows;
+        this->_cols = matrix._cols;
+        this->_array = new Container<T>[_rows];
+        for (int i = 0; i < _rows; ++i) {
+            this->_array[i] = Container<T>(_cols);
+            for (int j = 0; j < _cols; ++j) {
+                this->_array[i][j] = matrix._array[i][j];
+            }
+        }
+    }
 
     template <typename T>
     Matrix<T> Matrix<T>:: operator * (const Matrix<T>& arr) {
@@ -206,15 +234,7 @@ namespace matrix {
         return temp;
     }
 
-    template <typename T>
-    Matrix<T>& Matrix<T>::operator*=(const T& value) {
-        for (int i = 0; i < this->_rows; ++i) {
-            for (int j = 0; j < this->_cols; ++j) {
-                this->_array[i][j] *= value;
-            }
-        }
-        return *this;
-    }
+    
 
 
     template <typename T>
