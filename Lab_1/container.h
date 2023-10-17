@@ -112,4 +112,5 @@ namespace matrix {
 	Container<T>::~Container() {
 		delete[] this->_vector;
 	}
+	
 }

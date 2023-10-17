@@ -36,14 +36,11 @@ namespace matrix {
 
         Matrix<T>& operator*=(const T& value);
 
-        Matrix<T>& operator/=(const T& value);
         Matrix<T>& operator=(const Matrix<T>& other);
         T& operator[](int num);
         T operator[](int num) const;
-        /*void Swap(Matrix<T>& other);*/
 
         T trace();
-        /*friend ostream& operator <<(ostream& stream, const Matrix<T>& matrix);*/
         ~Matrix();
     };
     template <typename T>
@@ -54,15 +51,6 @@ namespace matrix {
     T& Matrix<T>::operator[](int num) {
         return this->_array[num];
     }
-   /* template<typename T>
-    Matrix<T>::Matrix(const Matrix<T>& other) {
-        this->_rows = other._rows;
-        this->cols = other._cols;
-        this->_array = new Container<T>[other._rows];
-        for (int i = 0; i < other._rows; ++i) {
-            (*this[i]) = other[i];
-        }
-    }*/
     template<typename T>
     bool checking_for_coplanarity(const Matrix<T>& arr1, const Matrix<T>& arr2, const Matrix<T>& arr3) {
         Matrix<T> matrix(3,3, 0);
@@ -79,29 +67,27 @@ namespace matrix {
             return false;
         }
     }
-
     template <typename T>
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
         if (this != &other) {
             if (this->_array) {
+                for (int i = 0; i < this->_rows; ++i) {
+                    delete[] this->_array[i];
+                }
                 delete[] this->_array;
             }
             this->_rows = other._rows;
             this->_cols = other._cols;
-            this->_array = new Container<T>[this->_rows];
+            this->_array = new Container<T>*[this->_rows];
             for (int i = 0; i < this->_rows; ++i) {
-                this->_array[i] = other._array[i];
+                this->_array[i] = new Container<T>[this->_cols];
+                for (int j = 0; j < this->_cols; ++j) {
+                    this->_array[i][j] = other._array[i][j];
+                }
             }
         }
         return *this;
     }
-
-    /*template <typename T>
-    void Matrix<T>::Swap(Matrix<T>& other) {
-        swap(this->_rows, other._rows);
-        swap(this->_cols, other._cols);
-        swap(this->_array, other._array);
-    }*/
 
     template <typename T>
     int Matrix<T>::get_rows() const {
@@ -113,14 +99,8 @@ namespace matrix {
         return _cols;
     }
 
-
-   /* template <typename T>
-    T** get_array() {
-        return _array;
-    }*/
-
     template <typename T>
-    Matrix<T>::Matrix(int rows, int cols, const T& value) {
+    Matrix<T>::Matrix(int rows, int cols, const T& value ) {
         if (rows <= 0 || cols <= 0) {
             throw runtime_error("Invalid sizes of matrix");
         }
@@ -146,7 +126,7 @@ namespace matrix {
         this->_cols = cols;
         _array = new Container<T>[_rows];
         for (int i = 0; i < _rows; ++i) {
-            _array[i] = Container<T>[_cols];
+            _array[i] = Container<T>(_cols);    
         }
         for (int i = 0; i < _rows; ++i) {
             for (int j = 0; j < _cols; ++j) {
@@ -238,16 +218,19 @@ namespace matrix {
 
 
     template <typename T>
-    Matrix<T>& Matrix<T>::operator /= (const T& value) {
-        if (value == 0) {
-            throw runtime_error("Invalid argument");
-        }
-        for (int i = 0; i < this->_rows; ++i) {
-            for (int j = 0; j < this->_cols; ++j) {
-                this->_array[i][j] /= value;
+    Matrix<T> operator / (const Matrix<T>& mat, const T& scalar) {
+        int rows = mat.get_rows();
+        int cols = mat.get_cols();
+
+        Matrix<T> result(rows, cols,0);
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                result(i, j) = mat(i, j) / scalar;
             }
         }
-        return *this;
+
+        return result;
     }
 
     template <typename T>   
