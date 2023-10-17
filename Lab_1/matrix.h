@@ -19,8 +19,6 @@ namespace matrix {
         Matrix(int rows, int cols, const T& value);
 
         Matrix(int rows, int cols, T upper_bound, T lower_bound);
-
-        T checking_for_coplanarity(const Matrix<T>& arr, const Matrix<T>& arr2, const Matrix<T>& arr3);
        
         int get_rows() const;
 
@@ -40,12 +38,22 @@ namespace matrix {
 
         Matrix<T>& operator/=(const T& value);
         Matrix<T>& operator=(const Matrix<T>& other);
+        T& operator[](int num);
+        T operator[](int num) const;
         /*void Swap(Matrix<T>& other);*/
 
         T trace();
         /*friend ostream& operator <<(ostream& stream, const Matrix<T>& matrix);*/
         ~Matrix();
     };
+    template <typename T>
+    T Matrix<T>::operator[](int num) const {
+        return this->_array[num];
+    }
+    template <typename T>
+    T& Matrix<T>::operator[](int num) {
+        return this->_array[num];
+    }
    /* template<typename T>
     Matrix<T>::Matrix(const Matrix<T>& other) {
         this->_rows = other._rows;
@@ -55,14 +63,21 @@ namespace matrix {
             (*this[i]) = other[i];
         }
     }*/
-    template<typename T1,typename T2>
-    Matrix<T1> operator*=(const T2& scalar, const Matrix<T1> matrix) {
-        auto res =matrix * scalar;
-        return res;
-    }
-    template <typename T>
-    T Matrix<T>::checking_for_coplanarity(const Matrix<T>& arr, const Matrix<T>& arr2, const Matrix<T>& arr3) {
-        ;
+    template<typename T>
+    bool checking_for_coplanarity(const Matrix<T>& arr1, const Matrix<T>& arr2, const Matrix<T>& arr3) {
+        Matrix<T> matrix(3,3, 0);
+        for (int i = 0; i < 3; i++) {
+            matrix(0,i) = arr1(0,i);
+            matrix(1,i) = arr2(0,i);
+            matrix(2,i) = arr3(0,i);
+        }   
+        T determinant = (matrix(0,0) * matrix(1,1) * matrix(2,2)) + (matrix(0,1) * matrix(1,2) * matrix(2,0)) + (matrix(1, 0) * matrix(0,2) * matrix(2,1)) - (matrix(0, 2) * matrix(1, 1) * matrix(2, 0)) - (matrix(0, 1) * matrix(1, 0) * matrix(2, 2)) - (matrix(0, 0) * matrix(2, 1) * matrix(1, 2));
+        if (determinant == T(0)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     template <typename T>
@@ -200,7 +215,7 @@ namespace matrix {
         if (this->_cols != arr._rows) {
             throw runtime_error("Incompatible matrix sizes for multiplication");
         }
-        Matrix<T> temp(this->_rows,arr.get_cols(),0);
+        Matrix<T> temp(this->_rows, arr.get_cols(), 0);
         for (int i = 0; i < this->_rows; ++i) {
             for (int j = 0; j < arr._cols; ++j) {
                 for (int k = 0; k < this->_cols; k++) {
