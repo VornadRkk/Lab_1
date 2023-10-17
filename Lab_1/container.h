@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <complex>
 const float epsilon = 0.0001f;
 using namespace std;
 
@@ -21,6 +22,7 @@ namespace matrix {
 		Container<T>& operator=(const Container<T>& other);
 		T& operator[](int num);
 		T operator[](int num) const;
+
 	};
 
 	template <typename T>

@@ -4,6 +4,7 @@
 #include <ctime>
 #include <exception>
 #include "container.h"
+#include <complex>
 using namespace std;
 namespace matrix {
     template <typename T>
@@ -19,8 +20,8 @@ namespace matrix {
 
         Matrix(int rows, int cols, T upper_bound, T lower_bound);
 
-        /*Matrix(const Matrix<T>& other);*/
-
+        T checking_for_coplanarity(const Matrix<T>& arr, const Matrix<T>& arr2, const Matrix<T>& arr3);
+       
         int get_rows() const;
 
         int get_cols() const;
@@ -39,7 +40,7 @@ namespace matrix {
 
         Matrix<T>& operator/=(const T& value);
         Matrix<T>& operator=(const Matrix<T>& other);
-        void Swap(Matrix<T>& other);
+        /*void Swap(Matrix<T>& other);*/
 
         T trace();
         /*friend ostream& operator <<(ostream& stream, const Matrix<T>& matrix);*/
@@ -54,7 +55,16 @@ namespace matrix {
             (*this[i]) = other[i];
         }
     }*/
-   
+    template<typename T1,typename T2>
+    Matrix<T1> operator*=(const T2& scalar, const Matrix<T1> matrix) {
+        auto res =matrix * scalar;
+        return res;
+    }
+    template <typename T>
+    T Matrix<T>::checking_for_coplanarity(const Matrix<T>& arr, const Matrix<T>& arr2, const Matrix<T>& arr3) {
+        ;
+    }
+
     template <typename T>
     Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
         if (this != &other) {
@@ -71,12 +81,12 @@ namespace matrix {
         return *this;
     }
 
-    template <typename T>
+    /*template <typename T>
     void Matrix<T>::Swap(Matrix<T>& other) {
         swap(this->_rows, other._rows);
         swap(this->_cols, other._cols);
         swap(this->_array, other._array);
-    }
+    }*/
 
     template <typename T>
     int Matrix<T>::get_rows() const {
@@ -202,7 +212,7 @@ namespace matrix {
     }
 
     template <typename T>
-    Matrix<T>& Matrix<T>::operator *= (const T& value) {
+    Matrix<T>& Matrix<T>::operator*=(const T& value) {
         for (int i = 0; i < this->_rows; ++i) {
             for (int j = 0; j < this->_cols; ++j) {
                 this->_array[i][j] *= value;
@@ -210,6 +220,7 @@ namespace matrix {
         }
         return *this;
     }
+
 
     template <typename T>
     Matrix<T>& Matrix<T>::operator /= (const T& value) {
